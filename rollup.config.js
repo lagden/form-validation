@@ -4,10 +4,13 @@ import babel from 'rollup-plugin-babel';
 
 export default {
 	entry: 'index.js',
-	format: 'umd',
+	format: 'amd',
 	dest: 'dist/index.js',
 	moduleName: 'lagdenValidation',
 	plugins: [
-		babel()
+		babel({
+			runtimeHelpers: true,
+			externalHelpers: false
+		})
 	]
 };

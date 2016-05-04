@@ -1,8 +1,4 @@
-(function(global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-		typeof define === 'function' && define.amd ? define(factory) :
-			(global.lagdenValidation = factory());
-}(this, function() {
+define(function() {
 	'use strict';
 
 	var babelHelpers = {};
@@ -162,4 +158,4 @@
 
 	return FormValidation;
 
-}));
+});
