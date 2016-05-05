@@ -12,11 +12,7 @@ if ('assign' in Object === false) {
 }
 
 class FormValidation {
-	constructor(fid, options) {
-		if ((this instanceof FormValidation) === false) {
-			return new FormValidation(fid, options);
-		}
-
+	constructor(fid, options = {}) {
 		this.options = {
 			submit: false,
 			invalid: false,

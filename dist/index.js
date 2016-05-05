@@ -42,12 +42,9 @@ define(function() {
 	}
 
 	var FormValidation = function() {
-		function FormValidation(fid, options) {
+		function FormValidation(fid) {
+			var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 			babelHelpers.classCallCheck(this, FormValidation);
-
-			if (this instanceof FormValidation === false) {
-				return new FormValidation(fid, options);
-			}
 
 			this.options = {
 				submit: false,

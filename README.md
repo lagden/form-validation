@@ -22,12 +22,6 @@ Via [NPM](https://www.npmjs.com/)
 npm install lagden-validation --save
 ```
 
-Via [bower](https://bower.io/)
-
-```
-bower install lagden-validation --save
-```
-
 
 ## License
 

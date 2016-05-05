@@ -8,9 +8,6 @@ export default {
 	dest: 'dist/index.js',
 	moduleName: 'lagdenValidation',
 	plugins: [
-		babel({
-			runtimeHelpers: true,
-			externalHelpers: false
-		})
+		babel()
 	]
 };
