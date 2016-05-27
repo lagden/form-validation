@@ -1,6 +1,7 @@
-.nyc_output/
-coverage/
-node_modules/
+.nyc_output
+coverage
+node_modules
+dist
 
 # Others
 cgi-bin

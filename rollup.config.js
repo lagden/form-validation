@@ -3,11 +3,12 @@
 import babel from 'rollup-plugin-babel';
 
 export default {
-	entry: 'index.js',
-	format: 'amd',
+	entry: 'src/index.js',
+	format: 'umd',
 	dest: 'dist/index.js',
-	moduleName: 'lagdenValidation',
+	moduleName: 'FormValidation',
 	plugins: [
 		babel()
-	]
+	],
+	sourceMap: true
 };

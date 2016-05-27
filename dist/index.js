@@ -1,4 +1,8 @@
-define(function() {
+(function(global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+		typeof define === 'function' && define.amd ? define(factory) :
+			(global.FormValidation = factory());
+}(this, function() {
 	'use strict';
 
 	var babelHelpers = {};
@@ -42,6 +46,25 @@ define(function() {
 	}
 
 	var FormValidation = function() {
+		babelHelpers.createClass(FormValidation, null, [{
+			key: 'addCustomValidation',
+			value: function addCustomValidation(name, fn) {
+				if (typeof this.custom_ === 'undefined') {
+					this.custom_ = {};
+				}
+				if (typeof fn === 'function') {
+					this.custom_[name] = fn;
+				} else {
+					throw new TypeError('✖ Is not a function');
+				}
+			}
+		}, {
+			key: 'custom',
+			value: function custom(name) {
+				return this.custom_[name] || false;
+			}
+		}]);
+
 		function FormValidation(fid) {
 			var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 			babelHelpers.classCallCheck(this, FormValidation);
@@ -54,6 +77,7 @@ define(function() {
 
 			Object.assign(this.options, options);
 
+			this.currentInvalids = [];
 			this.frm = document.querySelector(fid);
 			if (this.frm) {
 				if ('from' in Array) {
@@ -64,18 +88,44 @@ define(function() {
 				this.frm.addEventListener('keydown', this, false);
 				this.frm.addEventListener('submit', this, false);
 			} else {
-				throw new TypeError('✖ Form not found');
+				throw new Error('✖ Form not found');
 			}
 		}
 
 		babelHelpers.createClass(FormValidation, [{
+			key: 'customValidation',
+			value: function customValidation() {
+				var invalid = [];
+				this.campos.forEach(function(el) {
+					var customValidation = el.dataset && el.dataset.customValidation || el.getAttribute('data-custom-validation');
+					if (customValidation) {
+						var validationMethods = customValidation.split(',').map(function(v) {
+							return v.trim();
+						});
+						validationMethods.forEach(function(fnName) {
+							var fn = FormValidation.custom(fnName);
+							if (fn) {
+								var result = fn(el.value);
+								if (result.valid === false) {
+									invalid.push({
+										title: el.dataset && el.dataset.title || el.title || el.name || 'Atenção',
+										msg: result.validationMessage
+									});
+								}
+							}
+						});
+					}
+				});
+				return invalid;
+			}
+		}, {
 			key: 'validation',
 			value: function validation() {
 				var invalid = [];
 				this.campos.forEach(function(el) {
-					if (el.validity.valid === false) {
+					if (el.validity && el.validity.valid === false) {
 						invalid.push({
-							title: el.dataset.title || el.title,
+							title: el.dataset && el.dataset.title || el.title || el.name || 'Atenção',
 							msg: el.validationMessage
 						});
 					}
@@ -83,8 +133,8 @@ define(function() {
 				return invalid;
 			}
 		}, {
-			key: 'onTab',
-			value: function onTab(event) {
+			key: 'onKeydown',
+			value: function onKeydown(event) {
 				var _this = this;
 
 				var elfocus = void 0;
@@ -120,33 +170,23 @@ define(function() {
 			value: function onSubmit(event) {
 				event.preventDefault();
 				this.frm.classList.add(this.options.submitted);
-				var invalids = this.validation();
-				if (invalids.length === 0) {
+				this.currentInvalids = this.validation().concat(this.customValidation());
+				if (this.currentInvalids.length === 0) {
 					if (typeof this.options.submit === 'function') {
 						this.options.submit(this.frm);
 					} else {
 						this.frm.submit();
 					}
 				} else if (typeof this.options.invalid === 'function') {
-					this.options.invalid(invalids);
-				} else {
-					invalids.forEach(function(o) {
-						console.info(o);
-					});
+					this.options.invalid(this.currentInvalids);
 				}
 			}
 		}, {
 			key: 'handleEvent',
 			value: function handleEvent(event) {
-				switch (event.type) {
-					case 'keydown':
-						this.onTab(event);
-						break;
-					case 'submit':
-						this.onSubmit(event);
-						break;
-					default:
-						console.info('Event without handler', event.type);
+				var ev = '' + event.type.charAt(0).toUpperCase() + event.type.slice(1);
+				if (this['on' + ev]) {
+					this['on' + ev](event);
 				}
 			}
 		}]);
@@ -155,4 +195,5 @@ define(function() {
 
 	return FormValidation;
 
-});
+}));
+//# sourceMappingURL=index.js.map
