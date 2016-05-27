@@ -5,8 +5,8 @@
 
 [ci-img]:     https://travis-ci.org/lagden/form-validation.svg
 [ci]:         https://travis-ci.org/lagden/form-validation
-[cover-img]:  https://codecov.io/github/lagden/form-validation/coverage.svg?branch=master
-[cover]:      https://codecov.io/github/lagden/form-validation?branch=master
+[cover-img]:  https://codecov.io/gh/lagden/form-validation/branch/master/graph/badge.svg
+[cover]:      https://codecov.io/gh/lagden/form-validation
 [devDep-img]: https://david-dm.org/lagden/form-validation/dev-status.svg
 [devDep]:     https://david-dm.org/lagden/form-validation#info=devDependencies
 
