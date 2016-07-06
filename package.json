@@ -1,6 +1,6 @@
 {
   "name": "lagden-validation",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Form validation",
   "keywords": [
     "form",
@@ -28,7 +28,8 @@
     "test": "BABEL_ENV=ava nyc ava",
     "rollup": "BABEL_ENV=rollup rollup -c -o dist/index.js",
     "pretty": "esformatter -i --indent.value=\"\t\" 'dist/*.js'",
-    "build": "npm test && npm run rollup && npm run pretty",
+    "gzip": "find ./dist -name '*.js' -type f -exec sh -c 'gzip -c --best {} > {}.gz' \\;",
+    "build": "npm test && npm run rollup && npm run pretty && npm run gzip",
     "prepublish": "rm -rf dist && npm run build"
   },
   "engines": {
