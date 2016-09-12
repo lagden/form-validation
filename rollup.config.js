@@ -1,14 +1,21 @@
 'use strict';
 
-import babel from 'rollup-plugin-babel';
+import buble from 'rollup-plugin-buble';
+import commonjs from 'rollup-plugin-commonjs';
+import nodeResolve from 'rollup-plugin-node-resolve';
 
 export default {
 	entry: 'src/index.js',
-	format: 'umd',
 	dest: 'dist/index.js',
+	format: 'umd',
 	moduleName: 'FormValidation',
 	plugins: [
-		babel()
+		buble(),
+		nodeResolve({
+			jsnext: false,
+			main: true
+		}),
+		commonjs()
 	],
 	sourceMap: true
 };

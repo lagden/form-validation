@@ -1,14 +1,17 @@
 # Form Validation
 [![Build Status][ci-img]][ci]
 [![Coverage Status][cover-img]][cover]
+[![Dependency Status][dep-img]][dep]
 [![devDependency Status][devDep-img]][devDep]
 
-[ci-img]:     https://travis-ci.org/lagden/form-validation.svg
-[ci]:         https://travis-ci.org/lagden/form-validation
-[cover-img]:  https://codecov.io/gh/lagden/form-validation/branch/master/graph/badge.svg
-[cover]:      https://codecov.io/gh/lagden/form-validation
-[devDep-img]: https://david-dm.org/lagden/form-validation/dev-status.svg
-[devDep]:     https://david-dm.org/lagden/form-validation#info=devDependencies
+[ci-img]:        https://travis-ci.org/lagden/form-validation.svg
+[ci]:            https://travis-ci.org/lagden/form-validation
+[cover-img]:     https://codecov.io/gh/lagden/form-validation/branch/master/graph/badge.svg
+[cover]:         https://codecov.io/gh/lagden/form-validation
+[dep-img]:       https://david-dm.org/lagden/form-validation.svg
+[dep]:           https://david-dm.org/lagden/form-validation
+[devDep-img]:    https://david-dm.org/lagden/form-validation/dev-status.svg
+[devDep]:        https://david-dm.org/lagden/form-validation#info=devDependencies
 
 
 Simple form validation
@@ -24,49 +27,29 @@ npm install lagden-validation --save
 
 ## Usage
 
-There are many ways use it!
+Take a look in [example](https://github.com/lagden/form-validation/blob/master/example/index.html)
 
-### Simple
+
+## API
 
 ```js
 var fv = new FormValidation('#myFrm');
 ```
 
-### Simple with options
+### Params
 
-```js
-var fv = new FormValidation('#myFrm', {
-  submit: function(frm) {
-    // do some stuff...
-    frm.submit();
-  }
-});
-```
+Name        | Type    | Default | Description
+----------- | ------- | ------- | -----------
+elementID   | string  | -       | ID of form element
+options     | object  | `{submit: false, invalid: false, submitted: 'submitted'}` | Initial options
 
-### Custom validation
+#### options
 
-```html
-<form action="/send" method="post">
-  <input type="text" name="zipcode" data-custom-validation="zipcode" required>
-  <button type="submit" formnovalidate>Send</button>
-</form>
-
-<script>
-// zipcode validation
-function validZipcode(v) {
-  return {
-    valid: /^(\d{5})\-(\d{3})$/.test(v),
-    validationMessage: 'Invalid zipcode'
-  };
-}
-
-// Add custom validation
-FormValidation.addCustomValidation('zipcode', validZipcode);
-
-// Create instance
-var fv = new FormValidation('#myFrm');
-</script>
-```
+Name        | Type    | Default | Description
+----------- | ------- | ------- | -----------
+submit      | boolean \| function | `false` | Callback for submit action
+invalid     | boolean \| function | `false` | Callback for invalids inputs
+submitted   | string  | Style added to form when submitted
 
 
 ## License

@@ -1,6 +1,7 @@
 'use strict';
 
 const jsdom = require('jsdom');
+
 global.document = jsdom.jsdom([
 	'<form id="frm" action="#test" method="GET">',
 	'<label for="email">Email</label>',
@@ -11,12 +12,3 @@ global.document = jsdom.jsdom([
 	'</form>'
 ].join(''));
 global.window = global.document.defaultView;
-
-// const WebDriver = require('selenium-webdriver');
-// global.Assertion = WebDriver.Assertion;
-// global.By = WebDriver.By;
-// global.until = WebDriver.until;
-// global.driver = new WebDriver
-// 	.Builder()
-// 	.withCapabilities(WebDriver.Capabilities.chrome())
-// 	.build();

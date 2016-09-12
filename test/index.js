@@ -2,7 +2,7 @@
 
 import test from 'ava';
 import simulant from 'simulant';
-import FormValidation from '../src/.';
+import FormValidation from '../src/index';
 
 function validZipcode(v) {
 	return {
@@ -12,10 +12,6 @@ function validZipcode(v) {
 }
 
 const fv = new FormValidation('#frm');
-
-test('instance', t => {
-	t.true(fv instanceof FormValidation);
-});
 
 // jsdom doesn't support Form validation :(
 test('validation', t => {
@@ -33,11 +29,6 @@ test('add custom validation', t => {
 	t.true(FormValidation.custom('zipcode') === validZipcode);
 });
 
-test('customValidation', t => {
-	const invalids = fv.customValidation();
-	t.is(invalids.length, 1);
-});
-
 test('[exception] add custom validation', t => {
 	t.throws(() => FormValidation.addCustomValidation('another', 'validZipcode'), '✖ Is not a function');
 });
@@ -46,16 +37,8 @@ test('[not found] get custom validation', t => {
 	t.false(FormValidation.custom('another'));
 });
 
-test.cb('onKeydown + onSubmit with invalid callback', t => {
-	t.plan(2);
-	const input = document.querySelector('#zipcode');
-	fv.options.invalid = invalids => {
-		t.true(invalids.length === 1);
-		t.is(JSON.stringify(invalids), '[{"title":"zipcode","msg":"Invalid zipcode"}]');
-		t.end();
-	};
-	input.focus();
-	simulant.fire(input, simulant('keydown', {which: 13}));
+test('remove customValidation', t => {
+	t.true(FormValidation.removeCustomValidation('zipcode'));
 });
 
 test.cb('onSubmit', t => {
@@ -80,9 +63,4 @@ test.cb('onSubmit callback', t => {
 		t.end();
 	};
 	simulant.fire(btn, simulant('click'));
-});
-
-test('remove customValidation', t => {
-	t.true(FormValidation.removeCustomValidation('zipcode'));
-	t.false(FormValidation.removeCustomValidation('another'));
 });
