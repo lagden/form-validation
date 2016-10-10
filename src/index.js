@@ -71,7 +71,7 @@ class FormValidation {
 		const invalid = [];
 		for (let i = 0; i < this.campos.length; i++) {
 			let el = this.campos[i];
-			if (el.getClientRects().length > 0) {
+			if (el.getClientRects().length > 0 || el.type === 'hidden') {
 				el.disabled = false;
 				el = this._customValidation(this.campos[i]);
 				if (el.validity && el.validity.valid === false) {
