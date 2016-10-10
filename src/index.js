@@ -50,7 +50,7 @@ class FormValidation {
 	}
 
 	_customValidation(el) {
-		const customValidation = (el.dataset && el.dataset.customValidation) || el.getAttribute('data-custom-validation');
+		const customValidation = el.getAttribute('data-custom-validation') || false;
 		if (customValidation) {
 			const validationMethods = customValidation.split(',').map(v => v.trim());
 			for (let i = 0; i < validationMethods.length; i++) {
@@ -72,6 +72,7 @@ class FormValidation {
 		for (let i = 0; i < this.campos.length; i++) {
 			let el = this.campos[i];
 			if (el.getClientRects().length > 0) {
+				el.disabled = false;
 				el = this._customValidation(this.campos[i]);
 				if (el.validity && el.validity.valid === false) {
 					invalid.push({
@@ -79,6 +80,8 @@ class FormValidation {
 						msg: el.validationMessage
 					});
 				}
+			} else {
+				el.disabled = true;
 			}
 		}
 		return invalid;

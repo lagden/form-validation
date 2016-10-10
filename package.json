@@ -1,6 +1,6 @@
 {
   "name": "lagden-validation",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Form validation",
   "keywords": [
     "form",
@@ -39,7 +39,7 @@
   "devDependencies": {
     "ava": "0.16.0",
     "codecov": "1.0.1",
-    "jsdom": "9.5.0",
+    "jsdom": "9.6.0",
     "nyc": "8.1.0",
     "rollup": "0.35.9",
     "rollup-plugin-buble": "0.13.0",
@@ -81,7 +81,6 @@
       "test/index.js"
     ],
     "concurrency": 1,
-    "timeout": "10s",
     "require": [
       "babel-register",
       "./test/helpers/setup-browser-env.js"
