@@ -38,18 +38,19 @@ var fv = new FormValidation('#myFrm');
 
 ### Params
 
-Name        | Type    | Default | Description
------------ | ------- | ------- | -----------
-elementID   | string  | -       | ID of form element
-options     | object  | `{submit: false, invalid: false, submitted: 'submitted'}` | Initial options
+Name        | Type      | Default | Description
+----------- | --------- | ------- | -----------
+elementID   | `string`  | -       | ID of form element
+options     | `object`  | `{submit: false, invalid: false, submitted: 'submitted'}` | Initial options
+
 
 #### options
 
 Name        | Type    | Default | Description
 ----------- | ------- | ------- | -----------
-submit      | boolean \| function | `false` | Callback for submit action
-invalid     | boolean \| function | `false` | Callback for invalids inputs
-submitted   | string  | Style added to form when submitted
+submit      | `boolean || function` | `false`     | Callback for submit action
+invalid     | `boolean || function` | `false`     | Callback for invalids inputs
+submitted   | `string`              | `submitted` | Style added to form when submitted
 
 
 ## License
