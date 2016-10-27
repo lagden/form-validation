@@ -51,9 +51,9 @@
 
 	// Create instance
 	var fv = new FormValidation('#myFrm', {
-		// submit: function (frm) {
-		// 	console.debug('submit it');
-		// },
+		submit: function (frm) {
+			console.debug('submit it');
+		},
 		invalid: function (invalids) {
 			invalids.forEach(function (invalid) {
 				console.log(invalid);

@@ -49,6 +49,16 @@ class FormValidation {
 		}
 	}
 
+	_cleanup() {
+		for (let i = 0; i < this.campos.length; i++) {
+			const el = this.campos[i];
+			if (el.hasAttribute('data-disabled-validation')) {
+				el.disabled = false;
+				el.removeAttribute('data-disabled-validation');
+			}
+		}
+	}
+
 	_customValidation(el) {
 		const customValidation = el.getAttribute('data-custom-validation') || false;
 		if (customValidation) {
@@ -73,6 +83,7 @@ class FormValidation {
 			let el = this.campos[i];
 			if (el.getClientRects().length > 0 || el.type === 'hidden') {
 				el.disabled = false;
+				el.removeAttribute('data-disabled-validation');
 				el = this._customValidation(this.campos[i]);
 				if (el.validity && el.validity.valid === false) {
 					invalid.push({
@@ -81,6 +92,7 @@ class FormValidation {
 					});
 				}
 			} else {
+				el.setAttribute('data-disabled-validation', '');
 				el.disabled = true;
 			}
 		}
@@ -100,6 +112,7 @@ class FormValidation {
 			} else {
 				this.frm.submit();
 			}
+			this._cleanup();
 		} else if (typeof this.options.invalid === 'function') {
 			this.options.invalid(this.currentInvalids);
 		}
