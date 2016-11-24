@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
-const jsdom = require('jsdom');
+const jsdom = require('jsdom')
 
 global.document = jsdom.jsdom([
 	'<form id="frm" action="#test" method="GET">',
@@ -10,6 +10,6 @@ global.document = jsdom.jsdom([
 	'<input type="text" id="zipcode" name="zipcode" data-custom-validation="zipcode" required>',
 	'<button id="btnSubmit" type="submit" formnovalidate>Send</button>',
 	'</form>'
-].join(''));
-global.window = global.document.defaultView;
-global.HTMLFormElement = global.window.HTMLFormElement;
+].join(''))
+global.window = global.document.defaultView
+global.HTMLFormElement = global.window.HTMLFormElement

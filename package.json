@@ -58,6 +58,7 @@
     "envs": [
       "es6"
     ],
+    "semicolon": false,
     "esnext": true,
     "global": [
       "window",

@@ -1,8 +1,8 @@
-'use strict';
+'use strict'
 
-import buble from 'rollup-plugin-buble';
-import commonjs from 'rollup-plugin-commonjs';
-import nodeResolve from 'rollup-plugin-node-resolve';
+import buble from 'rollup-plugin-buble'
+import commonjs from 'rollup-plugin-commonjs'
+import nodeResolve from 'rollup-plugin-node-resolve'
 
 export default {
 	entry: 'src/index.js',
@@ -18,4 +18,4 @@ export default {
 		commonjs()
 	],
 	sourceMap: true
-};
+}
