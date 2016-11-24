@@ -6,7 +6,7 @@ import FormValidation from '../src/index';
 
 function validZipcode(v) {
 	return {
-		valid: /^(\d{5})\-(\d{3})$/.test(v),
+		valid: /^(\d{5})-(\d{3})$/.test(v),
 		validationMessage: 'Invalid zipcode'
 	};
 }
