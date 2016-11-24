@@ -12,3 +12,4 @@ global.document = jsdom.jsdom([
 	'</form>'
 ].join(''));
 global.window = global.document.defaultView;
+global.HTMLFormElement = global.window.HTMLFormElement;

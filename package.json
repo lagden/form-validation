@@ -62,7 +62,8 @@
     "global": [
       "window",
       "document",
-      "HTMLElement"
+      "HTMLElement",
+      "HTMLFormElement"
     ]
   },
   "babel": {

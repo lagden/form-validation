@@ -3,23 +3,29 @@
 // For IE
 import objectAssign from 'object-assign';
 
+// Internal store of all Tooltip intances
+const instances = {};
+
+// Globally unique identifiers
+let GUID = 0;
+
 class FormValidation {
 	static addCustomValidation(name, fn) {
 		if (typeof fn === 'function') {
-			this.custom_[name] = fn;
+			this._custom[name] = fn;
 		} else {
 			throw new TypeError('✖ Is not a function');
 		}
 	}
 
 	static removeCustomValidation(name) {
-		if (this.custom_ && this.custom_[name]) {
-			this.custom_[name] = null;
+		if (this._custom && this._custom[name]) {
+			this._custom[name] = null;
 			if ('Reflect' in window) {
-				Reflect.deleteProperty(this.custom_, name);
+				Reflect.deleteProperty(this._custom, name);
 			} else {
-				this.custom_[name] = null;
-				delete this.custom_[name];
+				this._custom[name] = null;
+				delete this._custom[name];
 			}
 			return true;
 		}
@@ -27,10 +33,39 @@ class FormValidation {
 	}
 
 	static custom(name) {
-		return this.custom_[name] || false;
+		return this._custom[name] || false;
 	}
 
-	constructor(fid, options = {}) {
+	static data(element) {
+		const id = element && element.GUID;
+		return id && instances[id];
+	}
+
+	constructor(element, options = {}) {
+		if (typeof element === 'string') {
+			const frm = document.querySelector(element);
+			if (frm) {
+				this.frm = frm;
+			} else {
+				throw new Error('✖ Form not found');
+			}
+		} else if (element instanceof HTMLFormElement) {
+			this.frm = element;
+		} else {
+			throw new TypeError('✖ Is not String or HTMLFormElement');
+		}
+
+		// Check if element was initialized and return your instance
+		const initialized = FormValidation.data(this.frm);
+		if (initialized instanceof FormValidation) {
+			return initialized;
+		}
+
+		// Storage current instance
+		const id = ++GUID;
+		this.frm.GUID = id;
+		instances[id] = this;
+
 		this.options = {
 			submit: false,
 			invalid: false,
@@ -40,13 +75,8 @@ class FormValidation {
 		objectAssign(this.options, options);
 
 		this.currentInvalids = [];
-		this.frm = document.querySelector(fid);
-		if (this.frm) {
-			this.campos = Array && Array.from ? Array.from(this.frm.elements) : Array.prototype.slice.call(this.frm.elements);
-			this.frm.addEventListener('submit', this, false);
-		} else {
-			throw new Error('✖ Form not found');
-		}
+		this.campos = Array && Array.from ? Array.from(this.frm.elements) : Array.prototype.slice.call(this.frm.elements);
+		this.frm.addEventListener('submit', this, false);
 	}
 
 	_cleanup() {
@@ -124,8 +154,23 @@ class FormValidation {
 			this[`on${ev}`](event);
 		}
 	}
+
+	destroy() {
+		const id = this.frm.GUID;
+		if ('Reflect' in window) {
+			Reflect.deleteProperty(instances, id);
+			Reflect.deleteProperty(this.frm, GUID);
+		} else {
+			delete instances[id];
+			delete this.frm.GUID;
+		}
+		this.frm.removeEventListener('submit', this, false);
+		this.frm = null;
+		this.currentInvalids = null;
+		this.campos = null;
+	}
 }
 
-FormValidation.custom_ = {};
+FormValidation._custom = {};
 
 export default FormValidation;

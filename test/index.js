@@ -13,6 +13,19 @@ function validZipcode(v) {
 
 const fv = new FormValidation('#frm');
 
+let form;
+let formValidation;
+
+test.beforeEach(() => {
+	form = document.querySelector('#frm');
+	formValidation = new FormValidation(form);
+});
+
+test.after('remove listeners and objects createds on instance', t => {
+	formValidation.destroy();
+	t.true(formValidation.frm === null);
+});
+
 // jsdom doesn't support Form validation :(
 test('validation', t => {
 	const invalids = fv.validation();
@@ -20,8 +33,12 @@ test('validation', t => {
 	t.is(invalids.length, 0);
 });
 
-test('[exception] instance', t => {
+test('[exception] instance from string option', t => {
 	t.throws(() => new FormValidation('#wrongID'), '✖ Form not found');
+});
+
+test('instance from HTMLFormElement option', t => {
+	t.true(form.id === formValidation.frm.id);
 });
 
 test('add custom validation', t => {
