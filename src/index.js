@@ -69,8 +69,8 @@ class FormValidation {
 		instances[id] = this
 
 		this.options = {
-			submit: false,
-			invalid: false,
+			submit: null,
+			invalid: null,
 			submitted: 'submitted'
 		}
 

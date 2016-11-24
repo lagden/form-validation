@@ -11,34 +11,37 @@ function validZipcode(v) {
 	}
 }
 
-const fv = new FormValidation('#frm')
-
-let form
-let formValidation
-
-test.beforeEach(() => {
-	form = document.querySelector('#frm')
-	formValidation = new FormValidation(form)
+test.beforeEach(t => {
+	t.context.btn = document.querySelector('#btnSubmit')
+	t.context.input = document.querySelector('#zipcode')
+	t.context.frmElement = document.querySelector('#frm')
+	t.context.fv = new FormValidation(t.context.frmElement)
 })
 
-test.after('remove listeners and objects createds on instance', t => {
-	formValidation.destroy()
-	t.true(formValidation.frm === null)
+test.afterEach(t => {
+	if (t.context.fv.frm) {
+		t.context.fv.destroy()
+	}
 })
 
 // jsdom doesn't support Form validation :(
 test('validation', t => {
-	const invalids = fv.validation()
+	const invalids = t.context.fv.validation()
 	// t.is(invalids.length, 3) // expected
 	t.is(invalids.length, 0)
 })
 
-test('[exception] instance from string option', t => {
+test('[exception] instance from string', t => {
 	t.throws(() => new FormValidation('#wrongID'), '✖ Form not found')
 })
 
-test('instance from HTMLFormElement option', t => {
-	t.true(form.id === formValidation.frm.id)
+test('[exception] instance from element', t => {
+	t.throws(() => new FormValidation(t.context.btn), '✖ The element is not HTMLFormElement')
+})
+
+test('instance from string and get initialized', t => {
+	const fv = new FormValidation('#frm')
+	t.true(fv === t.context.fv)
 })
 
 test('add custom validation', t => {
@@ -58,26 +61,34 @@ test('remove customValidation', t => {
 	t.true(FormValidation.removeCustomValidation('zipcode'))
 })
 
-test.cb('onSubmit', t => {
+test('onSubmit', async t => {
 	t.plan(1)
-	const btn = document.querySelector('#btnSubmit')
-	const input = document.querySelector('#zipcode')
-	input.value = '05433-010'
-	simulant.fire(btn, simulant('click'))
-	setTimeout(() => {
-		t.true(fv.currentInvalids.length === 0)
-		t.end()
-	}, 30)
+	t.context.input.value = '05433-010'
+	const onSubmit = () => new Promise(resolve => {
+		t.context.fv.frm.onsubmit = () => {
+			resolve(t.context.fv.currentInvalids.length)
+			t.context.fv.frm.onsubmit = null
+		}
+		simulant.fire(t.context.btn, simulant('click'))
+	})
+	const total = await onSubmit()
+	t.is(total, 0)
 })
 
-test.cb('onSubmit callback', t => {
+test('onSubmit callback', async t => {
 	t.plan(1)
-	const btn = document.querySelector('#btnSubmit')
-	const input = document.querySelector('#zipcode')
-	input.value = '05433-010'
-	fv.options.submit = frm => {
-		t.is(frm.id, 'frm')
-		t.end()
-	}
-	simulant.fire(btn, simulant('click'))
+	t.context.input.value = '05433-010'
+	const onSubmit = () => new Promise(resolve => {
+		t.context.fv.options.submit = frm => {
+			resolve(frm.id)
+		}
+		simulant.fire(t.context.btn, simulant('click'))
+	})
+	const frm = await onSubmit()
+	t.is(frm, 'frm')
+})
+
+test('destroy', t => {
+	t.context.fv.destroy()
+	t.is(t.context.fv.frm, null)
 })

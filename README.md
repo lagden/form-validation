@@ -3,6 +3,7 @@
 [![Coverage Status][cover-img]][cover]
 [![Dependency Status][dep-img]][dep]
 [![devDependency Status][devDep-img]][devDep]
+[![XO code style][xo-img]][xo]
 
 [ci-img]:        https://travis-ci.org/lagden/form-validation.svg
 [ci]:            https://travis-ci.org/lagden/form-validation
@@ -12,6 +13,8 @@
 [dep]:           https://david-dm.org/lagden/form-validation
 [devDep-img]:    https://david-dm.org/lagden/form-validation/dev-status.svg
 [devDep]:        https://david-dm.org/lagden/form-validation#info=devDependencies
+[xo-img]:        https://img.shields.io/badge/code_style-XO-5ed9c7.svg
+[xo]:            https://github.com/sindresorhus/xo
 
 
 Simple form validation
@@ -32,25 +35,23 @@ Take a look in [example](https://github.com/lagden/form-validation/blob/master/e
 
 ## API
 
-```js
-var fv = new FormValidation('#myFrm');
-```
+**FormValidation( element [, options ] )**
 
 ### Params
 
-Name        | Type      | Default | Description
------------ | --------- | ------- | -----------
-elementID   | `string`  | -       | ID of form element
-options     | `object`  | `{submit: false, invalid: false, submitted: 'submitted'}` | Initial options
+Name        | Type                       | Default   | Description
+----------- | -------------------------- | --------- | -----------
+element     | string OR HTMLFormElement  | -         | ID of form element OR the form element
+options     | object                     | see below | Initial options
 
 
 #### options
 
-Name        | Type    | Default | Description
------------ | ------- | ------- | -----------
-submit      | `boolean || function` | `false`     | Callback for submit action
-invalid     | `boolean || function` | `false`     | Callback for invalids inputs
-submitted   | `string`              | `submitted` | Style added to form when submitted
+Name        | Type     | Default   | Description
+----------- | -------- | --------- | -----------
+submit      | function | null      | Callback for submit action
+invalid     | function | null      | Callback for invalids inputs
+submitted   | string   | submitted | Style added to form when submitted
 
 
 ## License
