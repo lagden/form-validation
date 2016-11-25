@@ -31,6 +31,12 @@ test('validation', t => {
 	t.is(invalids.length, 0)
 })
 
+test('get invalids', t => {
+	const invalids = t.context.fv.invalids
+	t.true(invalids instanceof Array)
+	t.is(invalids.length, 0)
+})
+
 test('[exception] instance from string', t => {
 	t.throws(() => new FormValidation('#wrongID'), '✖ Form not found')
 })

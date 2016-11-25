@@ -81,6 +81,10 @@ class FormValidation {
 		this.frm.addEventListener('submit', this, false)
 	}
 
+	get invalids() {
+		return this.currentInvalids
+	}
+
 	_cleanup() {
 		for (let i = 0; i < this.campos.length; i++) {
 			const el = this.campos[i]
@@ -110,7 +114,7 @@ class FormValidation {
 	}
 
 	validation() {
-		const invalid = []
+		const invalids = []
 		for (let i = 0; i < this.campos.length; i++) {
 			let el = this.campos[i]
 			if (el.getClientRects().length > 0 || el.type === 'hidden') {
@@ -118,9 +122,10 @@ class FormValidation {
 				el.removeAttribute('data-disabled-validation')
 				el = this._customValidation(this.campos[i])
 				if (el.validity && el.validity.valid === false) {
-					invalid.push({
+					invalids.push({
 						title: (el.dataset && el.dataset.title) || el.title || el.name || false,
-						msg: el.validationMessage
+						msg: el.validationMessage,
+						element: el
 					})
 				}
 			} else {
@@ -128,7 +133,7 @@ class FormValidation {
 				el.disabled = true
 			}
 		}
-		return invalid
+		return invalids
 	}
 
 	onSubmit(event) {
@@ -150,13 +155,6 @@ class FormValidation {
 		}
 	}
 
-	handleEvent(event) {
-		const ev = `${event.type.charAt(0).toUpperCase()}${event.type.slice(1)}`
-		if (this[`on${ev}`]) {
-			this[`on${ev}`](event)
-		}
-	}
-
 	destroy() {
 		const id = this.frm.GUID
 		instances[id] = null
@@ -171,6 +169,13 @@ class FormValidation {
 		this.frm = null
 		this.currentInvalids = null
 		this.campos = null
+	}
+
+	handleEvent(event) {
+		const ev = `${event.type.charAt(0).toUpperCase()}${event.type.slice(1)}`
+		if (this[`on${ev}`]) {
+			this[`on${ev}`](event)
+		}
 	}
 }
 
