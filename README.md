@@ -47,11 +47,11 @@ options     | object                     | see below | Initial options
 
 #### options
 
-Name        | Type     | Default   | Description
------------ | -------- | --------- | -----------
-submit      | function | null      | Callback for submit action
-invalid     | function | null      | Callback for invalids inputs
-submitted   | string   | submitted | Style added to form when submitted
+Name        | Type     | Default   | Arguments      | Description
+----------- | -------- | --------- | -------------- | -----------
+submit      | function | null      | form           | Callback is trigger if form is valid
+invalid     | function | null      | form, invalids | Callback is trigger if form is invalid
+always      | function | null      | form           | Callback always trigger
 
 
 ## License

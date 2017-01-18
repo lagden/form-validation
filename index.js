@@ -37,13 +37,11 @@ class FormValidation {
 			throw new TypeError('✖ The element is not HTMLFormElement')
 		}
 
-		// Check if element was initialized and return your instance
 		const initialized = FormValidation.data(this.frm)
 		if (initialized instanceof FormValidation) {
 			return initialized
 		}
 
-		// Storage current instance
 		const id = ++GUID
 		this.frm.GUID = id
 		instances[id] = this
@@ -58,11 +56,35 @@ class FormValidation {
 
 		this.currentInvalids = []
 		this.campos = this.frm.elements
-		this.frm.addEventListener('submit', this, false)
+		this._listeners('addEventListener')
 	}
 
 	get invalids() {
 		return this.currentInvalids
+	}
+
+	_listeners(method) {
+		this.frm[method]('submit', this, false)
+		for (let i = 0; i < this.campos.length; i++) {
+			const el = this.campos[i]
+			const customValidation = el.dataset.customValidation || false
+			if (customValidation) {
+				switch (el.type) {
+					case 'text':
+					case 'search':
+					case 'email':
+					case 'tel':
+					case 'url':
+					case 'number':
+					case 'range':
+						el[method]('input', this, false)
+						break
+					default:
+						el[method]('change', this, false)
+						break
+				}
+			}
+		}
 	}
 
 	_cleanupElement(el) {
@@ -79,31 +101,12 @@ class FormValidation {
 		}
 	}
 
-	_customValidation(el) {
-		const customValidation = el.dataset.customValidation || false
-		if (customValidation) {
-			const validationMethods = customValidation.split(',').map(v => v.trim())
-			for (let i = 0; i < validationMethods.length; i++) {
-				const fn = FormValidation.custom(validationMethods[i])
-				if (typeof fn === 'function') {
-					const result = fn(el.value)
-					el.setCustomValidity(result.valid ? '' : result.validationMessage)
-					if (result.valid === false) {
-						break
-					}
-				}
-			}
-		}
-		return el
-	}
-
 	validation() {
 		const invalids = []
 		for (let i = 0; i < this.campos.length; i++) {
-			let el = this.campos[i]
+			const el = this.campos[i]
 			if (el.getClientRects().length > 0 || el.type === 'hidden') {
 				this._cleanupElement(el)
-				el = this._customValidation(el)
 				if (el.validity && el.validity.valid === false) {
 					invalids.push({
 						title: el.dataset.title || el.title || el.name || '',
@@ -119,12 +122,33 @@ class FormValidation {
 		return invalids
 	}
 
+	_customValidation(event) {
+		const el = event.currentTarget
+		const customValidation = el.dataset.customValidation
+		const validationMethods = customValidation.split(',').map(v => v.trim())
+		for (let i = 0; i < validationMethods.length; i++) {
+			const fn = FormValidation.custom(validationMethods[i])
+			if (typeof fn === 'function') {
+				const result = fn(el.value)
+				el.setCustomValidity(result.valid ? '' : result.validationMessage)
+				if (result.valid === false) {
+					break
+				}
+			}
+		}
+	}
+
+	onInput(event) {
+		this._customValidation(event)
+	}
+
+	onChange(event) {
+		this._customValidation(event)
+	}
+
 	onSubmit(event) {
 		event.preventDefault()
 		this.currentInvalids = this.validation()
-		if (typeof this.frm.checkValidity !== 'function') {
-			this.frm.checkValidity = () => this.currentInvalids.length === 0
-		}
 		if (this.frm.checkValidity()) {
 			if (typeof this.options.submit === 'function') {
 				this.options.submit(this.frm)
@@ -143,8 +167,8 @@ class FormValidation {
 	destroy() {
 		const id = this.frm.GUID
 		instances = del(instances, id)
+		this._listeners('removeEventListener')
 		this.frm = del(this.frm, GUID)
-		this.frm.removeEventListener('submit', this, false)
 		this.frm = null
 		this.currentInvalids = null
 		this.campos = null

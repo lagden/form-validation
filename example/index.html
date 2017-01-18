@@ -34,12 +34,10 @@
 			<label for="price">Price</label>
 			<input type="text" id="price" name="price" placeholder="Example: 123.20" pattern="\d+\.\d{2}" required>
 		</div>
-
 		<div class="none">
 			<label for="another">Another</label>
 			<input type="text" id="another" name="another" required>
 		</div>
-
 		<button id="btnSubmit" type="submit" formnovalidate>Send</button>
 	</form>
 	<script src="../dist/index.js"></script>
@@ -62,15 +60,17 @@
 	// Create instance
 	var fv = new FormValidation('#myFrm', {
 		submit: function (frm) {
-			console.debug('submit it')
+			console.debug('submit')
 		},
 		invalid: function (frm, invalids) {
+			console.log('invalid')
 			invalids.forEach(function (invalid) {
 				console.log(invalid)
 			})
 		},
 		always: function (frm) {
-			frm.classList.add('submitted')
+			var method = frm.checkValidity() ? 'remove' : 'add'
+			frm.classList[method]('submitted')
 			console.debug('always')
 		}
 	});

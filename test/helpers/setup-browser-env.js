@@ -15,4 +15,5 @@ global.HTMLFormElement = global.window.HTMLFormElement
 global.HTMLElement = global.window.HTMLElement
 
 // Workaround
-window.HTMLElement.prototype.dataset = {}
+global.HTMLElement.prototype.dataset = {}
+global.HTMLFormElement.prototype.checkValidity = () => true
