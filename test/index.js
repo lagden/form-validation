@@ -2,7 +2,7 @@
 
 import test from 'ava'
 import simulant from 'simulant'
-import FormValidation from '../src/index'
+import FormValidation from '../index'
 
 function validZipcode(v) {
 	return {

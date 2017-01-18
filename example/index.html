@@ -11,6 +11,11 @@
 		.none {
 			display: none;
 		}
+		form > div {
+			display: flex;
+			flex-flow: column nowrap;
+			margin-bottom: 1em;
+		}
 	</style>
 </head>
 <body>
@@ -19,15 +24,15 @@
 		<input type="hidden" name="xxx" required>
 		<div>
 			<label for="email">Email</label>
-			<input type="email" id="email" name="email" required>
+			<input type="email" id="email" name="email" placeholder="Example: exemplo@local" required>
 		</div>
 		<div>
 			<label for="zipcode">Zipcode</label>
-			<input type="text" id="zipcode" name="zipcode" data-custom-validation="zipcode" required>
+			<input type="text" id="zipcode" name="zipcode" placeholder="Example: 09715-290" data-custom-validation="zipcode" required>
 		</div>
 		<div>
 			<label for="price">Price</label>
-			<input type="text" id="price" name="price" pattern="[0-9].[0-9][0-9]" required>
+			<input type="text" id="price" name="price" placeholder="Example: 123.20" pattern="\d+\.\d{2}" required>
 		</div>
 
 		<div class="none">
@@ -40,24 +45,33 @@
 	<script src="../dist/index.js"></script>
 	<script>
 	function validZipcode(v) {
+		var validationMessageDefault = 'Invalid zipcode'
+		var lang = {
+			'en-US': validationMessageDefault,
+			'pt-BR': 'CEP inválido'
+		}
 		return {
 			valid: /^(\d{5})\-(\d{3})$/.test(v),
-			validationMessage: 'Invalid zipcode'
-		};
+			validationMessage: lang[navigator.language] || validationMessageDefault
+		}
 	}
 
 	// Add custom validation
-	FormValidation.addCustomValidation('zipcode', validZipcode);
+	FormValidation.addCustomValidation('zipcode', validZipcode)
 
 	// Create instance
 	var fv = new FormValidation('#myFrm', {
 		submit: function (frm) {
-			console.debug('submit it');
+			console.debug('submit it')
 		},
-		invalid: function (invalids) {
+		invalid: function (frm, invalids) {
 			invalids.forEach(function (invalid) {
-				console.log(invalid);
-			});
+				console.log(invalid)
+			})
+		},
+		always: function (frm) {
+			frm.classList.add('submitted')
+			console.debug('always')
 		}
 	});
 	</script>

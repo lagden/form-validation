@@ -1,46 +1,26 @@
 'use strict'
 
-// For IE
-import objectAssign from 'object-assign'
+function extend(a, b) {
+	Object.keys(b).forEach(prop => {
+		a[prop] = b[prop]
+	})
+	return a
+}
 
-// Internal store of all Tooltip intances
-const instances = {}
+function del(obj, k) {
+	obj[k] = null
+	if ('Reflect' in window) {
+		Reflect.deleteProperty(obj, k)
+	} else {
+		delete obj[k]
+	}
+	return obj
+}
 
-// Globally unique identifiers
+let instances = {}
 let GUID = 0
 
 class FormValidation {
-	static addCustomValidation(name, fn) {
-		if (typeof fn === 'function') {
-			this._custom[name] = fn
-		} else {
-			throw new TypeError('✖ Is not a function')
-		}
-	}
-
-	static removeCustomValidation(name) {
-		if (this._custom && this._custom[name]) {
-			this._custom[name] = null
-			if ('Reflect' in window) {
-				Reflect.deleteProperty(this._custom, name)
-			} else {
-				this._custom[name] = null
-				delete this._custom[name]
-			}
-			return true
-		}
-		return false
-	}
-
-	static custom(name) {
-		return this._custom[name] || false
-	}
-
-	static data(element) {
-		const id = element && element.GUID
-		return id && instances[id]
-	}
-
 	constructor(element, options = {}) {
 		if (typeof element === 'string') {
 			const frm = document.querySelector(element)
@@ -69,15 +49,15 @@ class FormValidation {
 		instances[id] = this
 
 		this.options = {
+			always: null,
 			submit: null,
-			invalid: null,
-			submitted: 'submitted'
+			invalid: null
 		}
 
-		objectAssign(this.options, options)
+		extend(this.options, options)
 
 		this.currentInvalids = []
-		this.campos = Array && Array.from ? Array.from(this.frm.elements) : Array.prototype.slice.call(this.frm.elements)
+		this.campos = this.frm.elements
 		this.frm.addEventListener('submit', this, false)
 	}
 
@@ -85,18 +65,22 @@ class FormValidation {
 		return this.currentInvalids
 	}
 
+	_cleanupElement(el) {
+		if (el.dataset.disabledValidation) {
+			el.disabled = false
+			el.dataset = del(el.dataset, 'disabledValidation')
+		}
+	}
+
 	_cleanup() {
 		for (let i = 0; i < this.campos.length; i++) {
 			const el = this.campos[i]
-			if (el.hasAttribute('data-disabled-validation')) {
-				el.disabled = false
-				el.removeAttribute('data-disabled-validation')
-			}
+			this._cleanupElement(el)
 		}
 	}
 
 	_customValidation(el) {
-		const customValidation = el.getAttribute('data-custom-validation') || false
+		const customValidation = el.dataset.customValidation || false
 		if (customValidation) {
 			const validationMethods = customValidation.split(',').map(v => v.trim())
 			for (let i = 0; i < validationMethods.length; i++) {
@@ -118,18 +102,17 @@ class FormValidation {
 		for (let i = 0; i < this.campos.length; i++) {
 			let el = this.campos[i]
 			if (el.getClientRects().length > 0 || el.type === 'hidden') {
-				el.disabled = false
-				el.removeAttribute('data-disabled-validation')
-				el = this._customValidation(this.campos[i])
+				this._cleanupElement(el)
+				el = this._customValidation(el)
 				if (el.validity && el.validity.valid === false) {
 					invalids.push({
-						title: (el.dataset && el.dataset.title) || el.title || el.name || false,
+						title: el.dataset.title || el.title || el.name || '',
 						msg: el.validationMessage,
 						element: el
 					})
 				}
 			} else {
-				el.setAttribute('data-disabled-validation', '')
+				el.dataset.disabledValidation = ''
 				el.disabled = true
 			}
 		}
@@ -138,7 +121,6 @@ class FormValidation {
 
 	onSubmit(event) {
 		event.preventDefault()
-		this.frm.classList.add(this.options.submitted)
 		this.currentInvalids = this.validation()
 		if (typeof this.frm.checkValidity !== 'function') {
 			this.frm.checkValidity = () => this.currentInvalids.length === 0
@@ -151,20 +133,17 @@ class FormValidation {
 			}
 			this._cleanup()
 		} else if (typeof this.options.invalid === 'function') {
-			this.options.invalid(this.currentInvalids)
+			this.options.invalid(this.frm, this.currentInvalids)
+		}
+		if (typeof this.options.always === 'function') {
+			this.options.always(this.frm)
 		}
 	}
 
 	destroy() {
 		const id = this.frm.GUID
-		instances[id] = null
-		if ('Reflect' in window) {
-			Reflect.deleteProperty(instances, id)
-			Reflect.deleteProperty(this.frm, GUID)
-		} else {
-			delete instances[id]
-			delete this.frm.GUID
-		}
+		instances = del(instances, id)
+		this.frm = del(this.frm, GUID)
 		this.frm.removeEventListener('submit', this, false)
 		this.frm = null
 		this.currentInvalids = null
@@ -176,6 +155,31 @@ class FormValidation {
 		if (this[`on${ev}`]) {
 			this[`on${ev}`](event)
 		}
+	}
+
+	static addCustomValidation(name, fn) {
+		if (typeof fn === 'function') {
+			this._custom[name] = fn
+		} else {
+			throw new TypeError('✖ Is not a function')
+		}
+	}
+
+	static removeCustomValidation(name) {
+		if (this._custom && this._custom[name]) {
+			this._custom = del(this._custom, name)
+			return true
+		}
+		return false
+	}
+
+	static custom(name) {
+		return this._custom[name] || false
+	}
+
+	static data(element) {
+		const id = element && element.GUID
+		return id && instances[id]
 	}
 }
 

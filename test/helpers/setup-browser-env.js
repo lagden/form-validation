@@ -12,3 +12,7 @@ global.document = jsdom.jsdom(`
 </form>`)
 global.window = global.document.defaultView
 global.HTMLFormElement = global.window.HTMLFormElement
+global.HTMLElement = global.window.HTMLElement
+
+// Workaround
+window.HTMLElement.prototype.dataset = {}
